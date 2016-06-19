@@ -1,0 +1,248 @@
+all_op_file : 
+	$(MAKE) all_do PACKAGE=op_file PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../OutputPlugin/fileOP $(TOP_DIR)/./AutomateAll/../OutputPlugin/MongoOP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_corelib : 
+	$(MAKE) all_do PACKAGE=corelib PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Shared/ASHelper $(TOP_DIR)/./AutomateAll/../Shared/Core '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_system : 
+	$(MAKE) all_do PACKAGE=system PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Logger '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_mapper : 
+	$(MAKE) all_do PACKAGE=mapper PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Mapper '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_uam : 
+	$(MAKE) all_do PACKAGE=uam PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Uam '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_collector : 
+	$(MAKE) all_do PACKAGE=collector PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Collector '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_sysman : 
+	$(MAKE) all_do PACKAGE=sysman PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/ConfMan '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_utils : 
+	$(MAKE) all_do PACKAGE=utils PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Utils/LogSender $(TOP_DIR)/./AutomateAll/../Utils/ASUtils $(TOP_DIR)/./AutomateAll/../Utils/SvcMsgUtils '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_feed_netflow : 
+	$(MAKE) all_do PACKAGE=feed_netflow PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Feed/netflow '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_deps : 
+	$(MAKE) all_do PACKAGE=deps PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Deps/SqLite $(TOP_DIR)/./AutomateAll/../Deps/BSON $(TOP_DIR)/./AutomateAll/../Deps/LibCLI $(TOP_DIR)/./AutomateAll/../Deps/KAFKA $(TOP_DIR)/./AutomateAll/../Deps/aerospike $(TOP_DIR)/./AutomateAll/../Deps/Nanomsg $(TOP_DIR)/./AutomateAll/../Deps/JSMN $(TOP_DIR)/./AutomateAll/../Deps/Libevent $(TOP_DIR)/./AutomateAll/../Deps/MongoC $(TOP_DIR)/./AutomateAll/../Deps/LibUUID $(TOP_DIR)/./AutomateAll/../Deps/BerkeleyDB '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_prot_udp : 
+	$(MAKE) all_do PACKAGE=prot_udp PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Protocol/UDP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_test_collector : 
+	$(MAKE) all_do PACKAGE=test_collector PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/OutputPlugin/MongoOP $(TOP_DIR)/./AutomateAll/../Test/App/Collector $(TOP_DIR)/./AutomateAll/../Test/Feed $(TOP_DIR)/./AutomateAll/../Test/Protocol '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_test_corelib : 
+	$(MAKE) all_do PACKAGE=test_corelib PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/Shared/ASHelper $(TOP_DIR)/./AutomateAll/../Test/Shared/Core '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_test_mapper : 
+	$(MAKE) all_do PACKAGE=test_mapper PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/App/Mapper '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_test_confman : 
+	$(MAKE) all_do PACKAGE=test_confman PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/App/ConfMan '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all_test :  all_test_collector all_test_corelib all_test_mapper all_test_confman
+
+all_All :  all_op_file all_corelib all_system all_mapper all_uam all_collector all_sysman all_utils all_feed_netflow all_deps all_prot_udp all_test
+
+all-no-deps_op_file : 
+	$(MAKE) all-no-deps_do PACKAGE=op_file PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../OutputPlugin/fileOP $(TOP_DIR)/./AutomateAll/../OutputPlugin/MongoOP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_corelib : 
+	$(MAKE) all-no-deps_do PACKAGE=corelib PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Shared/ASHelper $(TOP_DIR)/./AutomateAll/../Shared/Core '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_system : 
+	$(MAKE) all-no-deps_do PACKAGE=system PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Logger '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_mapper : 
+	$(MAKE) all-no-deps_do PACKAGE=mapper PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Mapper '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_uam : 
+	$(MAKE) all-no-deps_do PACKAGE=uam PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Uam '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_collector : 
+	$(MAKE) all-no-deps_do PACKAGE=collector PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Collector '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_sysman : 
+	$(MAKE) all-no-deps_do PACKAGE=sysman PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/ConfMan '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_utils : 
+	$(MAKE) all-no-deps_do PACKAGE=utils PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Utils/LogSender $(TOP_DIR)/./AutomateAll/../Utils/ASUtils $(TOP_DIR)/./AutomateAll/../Utils/SvcMsgUtils '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_feed_netflow : 
+	$(MAKE) all-no-deps_do PACKAGE=feed_netflow PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Feed/netflow '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_deps : 
+	$(MAKE) all-no-deps_do PACKAGE=deps PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Deps/SqLite $(TOP_DIR)/./AutomateAll/../Deps/BSON $(TOP_DIR)/./AutomateAll/../Deps/LibCLI $(TOP_DIR)/./AutomateAll/../Deps/KAFKA $(TOP_DIR)/./AutomateAll/../Deps/aerospike $(TOP_DIR)/./AutomateAll/../Deps/Nanomsg $(TOP_DIR)/./AutomateAll/../Deps/JSMN $(TOP_DIR)/./AutomateAll/../Deps/Libevent $(TOP_DIR)/./AutomateAll/../Deps/MongoC $(TOP_DIR)/./AutomateAll/../Deps/LibUUID $(TOP_DIR)/./AutomateAll/../Deps/BerkeleyDB '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_prot_udp : 
+	$(MAKE) all-no-deps_do PACKAGE=prot_udp PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Protocol/UDP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_test_collector : 
+	$(MAKE) all-no-deps_do PACKAGE=test_collector PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/OutputPlugin/MongoOP $(TOP_DIR)/./AutomateAll/../Test/App/Collector $(TOP_DIR)/./AutomateAll/../Test/Feed $(TOP_DIR)/./AutomateAll/../Test/Protocol '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_test_corelib : 
+	$(MAKE) all-no-deps_do PACKAGE=test_corelib PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/Shared/ASHelper $(TOP_DIR)/./AutomateAll/../Test/Shared/Core '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_test_mapper : 
+	$(MAKE) all-no-deps_do PACKAGE=test_mapper PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/App/Mapper '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_test_confman : 
+	$(MAKE) all-no-deps_do PACKAGE=test_confman PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/App/ConfMan '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+all-no-deps_test :  all-no-deps_test_collector all-no-deps_test_corelib all-no-deps_test_mapper all-no-deps_test_confman
+
+all-no-deps_All :  all-no-deps_op_file all-no-deps_corelib all-no-deps_system all-no-deps_mapper all-no-deps_uam all-no-deps_collector all-no-deps_sysman all-no-deps_utils all-no-deps_feed_netflow all-no-deps_deps all-no-deps_prot_udp all-no-deps_test
+
+clean_op_file : 
+	$(MAKE) clean_do PACKAGE=op_file PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../OutputPlugin/fileOP $(TOP_DIR)/./AutomateAll/../OutputPlugin/MongoOP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_corelib : 
+	$(MAKE) clean_do PACKAGE=corelib PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Shared/ASHelper $(TOP_DIR)/./AutomateAll/../Shared/Core '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_system : 
+	$(MAKE) clean_do PACKAGE=system PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Logger '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_mapper : 
+	$(MAKE) clean_do PACKAGE=mapper PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Mapper '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_uam : 
+	$(MAKE) clean_do PACKAGE=uam PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Uam '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_collector : 
+	$(MAKE) clean_do PACKAGE=collector PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Collector '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_sysman : 
+	$(MAKE) clean_do PACKAGE=sysman PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/ConfMan '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_utils : 
+	$(MAKE) clean_do PACKAGE=utils PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Utils/LogSender $(TOP_DIR)/./AutomateAll/../Utils/ASUtils $(TOP_DIR)/./AutomateAll/../Utils/SvcMsgUtils '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_feed_netflow : 
+	$(MAKE) clean_do PACKAGE=feed_netflow PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Feed/netflow '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_deps : 
+	$(MAKE) clean_do PACKAGE=deps PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Deps/SqLite $(TOP_DIR)/./AutomateAll/../Deps/BSON $(TOP_DIR)/./AutomateAll/../Deps/LibCLI $(TOP_DIR)/./AutomateAll/../Deps/KAFKA $(TOP_DIR)/./AutomateAll/../Deps/aerospike $(TOP_DIR)/./AutomateAll/../Deps/Nanomsg $(TOP_DIR)/./AutomateAll/../Deps/JSMN $(TOP_DIR)/./AutomateAll/../Deps/Libevent $(TOP_DIR)/./AutomateAll/../Deps/MongoC $(TOP_DIR)/./AutomateAll/../Deps/LibUUID $(TOP_DIR)/./AutomateAll/../Deps/BerkeleyDB '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_prot_udp : 
+	$(MAKE) clean_do PACKAGE=prot_udp PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Protocol/UDP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_test_collector : 
+	$(MAKE) clean_do PACKAGE=test_collector PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/OutputPlugin/MongoOP $(TOP_DIR)/./AutomateAll/../Test/App/Collector $(TOP_DIR)/./AutomateAll/../Test/Feed $(TOP_DIR)/./AutomateAll/../Test/Protocol '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_test_corelib : 
+	$(MAKE) clean_do PACKAGE=test_corelib PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/Shared/ASHelper $(TOP_DIR)/./AutomateAll/../Test/Shared/Core '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_test_mapper : 
+	$(MAKE) clean_do PACKAGE=test_mapper PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/App/Mapper '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_test_confman : 
+	$(MAKE) clean_do PACKAGE=test_confman PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Test/App/ConfMan '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+clean_test :  clean_test_collector clean_test_corelib clean_test_mapper clean_test_confman
+
+clean_All :  clean_op_file clean_corelib clean_system clean_mapper clean_uam clean_collector clean_sysman clean_utils clean_feed_netflow clean_deps clean_prot_udp clean_test
+
+dist_op_file : 
+	$(MAKE) dist_do PACKAGE=op_file PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../OutputPlugin/fileOP $(TOP_DIR)/./AutomateAll/../OutputPlugin/MongoOP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_corelib : 
+	$(MAKE) dist_do PACKAGE=corelib PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Shared/ASHelper $(TOP_DIR)/./AutomateAll/../Shared/Core '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_system : 
+	$(MAKE) dist_do PACKAGE=system PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Logger '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_mapper : 
+	$(MAKE) dist_do PACKAGE=mapper PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Mapper '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_uam : 
+	$(MAKE) dist_do PACKAGE=uam PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Uam '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_collector : 
+	$(MAKE) dist_do PACKAGE=collector PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/Collector '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_sysman : 
+	$(MAKE) dist_do PACKAGE=sysman PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../App/ConfMan '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_utils : 
+	$(MAKE) dist_do PACKAGE=utils PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Utils/LogSender $(TOP_DIR)/./AutomateAll/../Utils/ASUtils $(TOP_DIR)/./AutomateAll/../Utils/SvcMsgUtils '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_feed_netflow : 
+	$(MAKE) dist_do PACKAGE=feed_netflow PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Feed/netflow '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_deps : 
+	$(MAKE) dist_do PACKAGE=deps PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Deps/SqLite $(TOP_DIR)/./AutomateAll/../Deps/BSON $(TOP_DIR)/./AutomateAll/../Deps/LibCLI $(TOP_DIR)/./AutomateAll/../Deps/KAFKA $(TOP_DIR)/./AutomateAll/../Deps/aerospike $(TOP_DIR)/./AutomateAll/../Deps/Nanomsg $(TOP_DIR)/./AutomateAll/../Deps/JSMN $(TOP_DIR)/./AutomateAll/../Deps/Libevent $(TOP_DIR)/./AutomateAll/../Deps/MongoC $(TOP_DIR)/./AutomateAll/../Deps/LibUUID $(TOP_DIR)/./AutomateAll/../Deps/BerkeleyDB '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_prot_udp : 
+	$(MAKE) dist_do PACKAGE=prot_udp PKG_SUBDIRS='$(TOP_DIR)/./AutomateAll/../Protocol/UDP '; \
+       rc=$$?; if test $$rc != 0; then exit $$rc ; fi;
+
+dist_test_collector : 
+
+dist_test_corelib : 
+
+dist_test_mapper : 
+
+dist_test_confman : 
+
+dist_test :  dist_test_collector dist_test_corelib dist_test_mapper dist_test_confman
+
+dist_All :  dist_op_file dist_corelib dist_system dist_mapper dist_uam dist_collector dist_sysman dist_utils dist_feed_netflow dist_deps dist_prot_udp dist_test
+
