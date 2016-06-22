@@ -30,6 +30,7 @@
 #include "Column.hpp"
 #include <sstream>
 #include <iostream>
+#include "libbson-1.0/bson.h"
 
 namespace voltdb {
 class TableIterator;
@@ -87,6 +88,13 @@ public:
      * the specified level of indentation before each line.
      */
     void toString(std::ostringstream &ostream, std::string indent) const;
+
+    /*
+     * Add rows of the tables as arrays to the bson object 
+     * 
+     */
+    void toString(bson_t &obson) const;
+
 
     void operator >> (std::ostream &ostream) const;
 
