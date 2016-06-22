@@ -193,8 +193,8 @@ public:
     /*
      * Generate a string representation of the contents of the message in json format
      */
-    std::string toString() const {
-	bson_t obson;
+    std::string toJSON() const {
+    	bson_t obson;
         //std::ostringstream ostream;
         //ostream << "Status: " << static_cast<int32_t>(statusCode()) << ", " << statusString() <<  std::endl;
         //ostream << "App Status: " << static_cast<int32_t>(appStatusCode()) << ", " << appStatusString() << std::endl;
