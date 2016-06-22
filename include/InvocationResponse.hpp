@@ -29,6 +29,7 @@
 #include <boost/shared_ptr.hpp>
 #include "ByteBuffer.hpp"
 #include "Table.h"
+#include "libbson-1.0/bson.h"
 #include <iostream>
 namespace voltdb {
 
@@ -188,6 +189,24 @@ public:
         }
         return ostream.str();
     }
+
+    /*
+     * Generate a string representation of the contents of the message in json format
+     */
+    std::string toString() const {
+	bson_t obson;
+        //std::ostringstream ostream;
+        //ostream << "Status: " << static_cast<int32_t>(statusCode()) << ", " << statusString() <<  std::endl;
+        //ostream << "App Status: " << static_cast<int32_t>(appStatusCode()) << ", " << appStatusString() << std::endl;
+        //ostream << "Client Data: " << clientData() << std::endl;
+        //ostream << "Cluster Round Trip Time: " << clusterRoundTripTime() << std::endl;
+        for (size_t ii = 0; ii < m_results.size(); ii++) {
+            //ostream << "Result Table " << ii << std::endl;
+            m_results[ii].toString(obson);
+        }
+        return bson_as_json(&obson, NULL);
+    }
+
 
 
     void operator >> (std::ostream &ostream) const {
