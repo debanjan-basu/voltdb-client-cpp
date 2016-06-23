@@ -35,7 +35,15 @@
 #include <sstream>
 #include "Geography.hpp"
 #include "GeographyPoint.hpp"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "libbson-1.0/bson.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 namespace voltdb {
 
@@ -520,12 +528,14 @@ public:
             	BSON_APPEND_UTF8(&pobson, m_columns->at(ii).m_name.c_str(), getDecimal(ii).toString().c_str());
             	break;
             case WIRE_TYPE_VARBINARY://lacks proper implemetation as allocation should happen from getVarbinary
+            {
             	uint8_t *out_value = new uint8_t[MAX_VARBINARY_SIZE];
             	int32_t out_len = 0;
             	assert (true == getVarbinary(ii, BUFSIZ, out_value, &out_len));
             	BSON_APPEND_BINARY(&pobson, m_columns->at(ii).m_name.c_str(), BSON_SUBTYPE_BINARY, out_value, out_len);
             	delete out_value;
                 break;
+            }
             case WIRE_TYPE_GEOGRAPHY_POINT:
             	assert(false);
                 break;

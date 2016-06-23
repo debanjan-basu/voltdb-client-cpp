@@ -18,7 +18,7 @@ cd ..
 rm -rf  libbson-1.1.11 
 rm -rf include/libbson-1.0
 rm -rf third_party_libs/linux/libbson-1.0
-mkdir third_party_libs/libbson-1.0
+mkdir third_party_libs/linux/libbson-1.0
 mkdir include/libbson-1.0
 cp -r libbsoninstall/include/libbson-1.0 include/.
 cp -r libbsoninstall/lib/* third_party_libs/linux/libbson-1.0/.

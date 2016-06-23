@@ -106,18 +106,18 @@ namespace voltdb {
 
     void Table::toString(bson_t &obson ) const {
 
-    	std::ostringstream ostream
+    	std::ostringstream ostream;
 		uint64_t index = 0;
 
     	bson_init (&obson);
     	bson_t child;
 
-    	BSON_APPEND_DOCUMENT_BEGIN (obson, "Output", &child);
+    	BSON_APPEND_DOCUMENT_BEGIN (&obson, "Output", &child);
         ostream << m_buffer.capacity();
-        BSON_APPEND_UTF8 (&child, "Table size", ostream.str().c_str);
+        BSON_APPEND_UTF8 (&child, "Table size", (const char*)ostream.str().c_str());
         ostream.flush();
         ostream << static_cast<int32_t>(getStatusCode());
-        BSON_APPEND_UTF8 (&child, "Status Code", ostream.str().c_str);
+        BSON_APPEND_UTF8 (&child, "Status Code", (const char*)ostream.str().c_str());
         ostream.flush();
 
 
@@ -130,7 +130,7 @@ namespace voltdb {
             ostream << index;
             BSON_APPEND_ARRAY(&child, ostream.str().c_str(), &gchild);
             ostream.flush();
-            index ++;
+            index+=1;
         }
         bson_append_document_end (&obson, &child);
     }
