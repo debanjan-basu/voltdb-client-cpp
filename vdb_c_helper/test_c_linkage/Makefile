@@ -16,10 +16,11 @@ INCLUDES = -I./ \
 	   -I$(TOP_DIR)/header \
 	   -I$(TOP_DIR)/../include
 
-LIBS = -lvoltdbcpp -lcvh
-STATIC_LIBS = -levent
+LIBS = -lvoltdbcpp  -lcvh -lbson-1.0 -lpthread
+STATIC_LIBS = -levent 
 
 LIBPATHS = -L$(TOP_DIR)/../third_party_libs/linux/ \
+	   -L$(TOP_DIR)/../third_party_libs/linux/libbson-1.0/ \
 	   -L$(TOP_DIR)/$(BUILD_CONFIG)/ \
 	   -L$(TOP_DIR)/../
 

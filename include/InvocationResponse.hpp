@@ -29,7 +29,7 @@
 #include <boost/shared_ptr.hpp>
 #include "ByteBuffer.hpp"
 #include "Table.h"
-#include "libbson-1.0/bson.h"
+
 #include <iostream>
 namespace voltdb {
 

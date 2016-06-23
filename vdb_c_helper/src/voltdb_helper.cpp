@@ -21,7 +21,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "header/voltdb_helper.h"
 
 
 #define __STDC_CONSTANT_MACROS
@@ -29,20 +28,24 @@
 
 #include <vector>
 #include <iostream>
-#include <boost/shared_ptr.hpp>
 #include "Client.h"
-#include "Table.h"
-#include "TableIterator.h"
-#include "Row.hpp"
-#include "WireType.h"
+
+#include "StatusListener.h"
 #include "Parameter.hpp"
 #include "ParameterSet.hpp"
+#include "Procedure.hpp"
+#include "WireType.h"
+#include "ProcedureCallback.hpp"
+#include "InvocationResponse.hpp"
 #include "ClientConfig.h"
+
+#include "header/voltdb_helper.h"
+
 
 
 static void fire ( void * client,  char * query, voltdb::InvocationResponse* resp);
 
-void * vdb_create_client_config( char* uname, char* passwd, unsigned int security)
+void * vdb_create_client_config( char* uname, char* passwd, unsigned int conn_type )
 {
 	voltdb::ClientConfig* cc = NULL;
 
@@ -76,112 +79,53 @@ void * vdb_create_client( void * cc, char* host )
 
 }
 
-int vdb_fire_update_query( void * client,  char * query, char** resp)
+int vdb_fire_upsert_query( void * client,  char * query, char** resp)
 {
 	voltdb::InvocationResponse response;
-	try
-	{
+	try{
 		fire(client, query, &response);
 
 	}
-	catch (...)
-	{
+	catch (...){
 		return -1;
 	}
 
-	*resp = (char*)calloc (1 , strlen((char*)response.toString().c_str()));
-	strncpy(*resp ,  (char*)response.toString().c_str(), strlen((char*)response.toString().c_str()));
+	
+	try {
+		*resp = (char*)calloc (1 , strlen((char*)response.toString().c_str()));
+		strncpy(*resp ,  (char*)response.toString().c_str(), strlen((char*)response.toString().c_str()));
+	}
+	catch (...){
+		return -1;
+	}
 
 
 	return 0;
 
 }
-
 
 int vdb_fire_read_query( void * client,  char * query, char** resp)
 {
 
-	int32_t   ii = 0;
-	unsigned  jj = 0;
 	voltdb::InvocationResponse response;
 
-	try
-	{
+	try{
 		fire(client, query, &response);
 	}
-	catch (...)
-	{
+	catch (...){
 		return -1;
 	}
 
-	*resp = (char*)calloc (1 , strlen((char*)response.toString().c_str()));
-	strncpy(*resp ,  (char*)response.toString().c_str(), strlen((char*)response.toString().c_str()));
-
-	//fetch table iterartor
-	for ( jj = 0; jj < response.results().size(); jj ++)
-	{
-		voltdb::Table  tb         = (response.results())[jj];
-		if ( 0 == tb.rowCount() )
-		{
-			printf("The query : %s did not return any rows", query);
-			return 0;
-
-		}
-		printf("the number of rows returned by the query : %d", tb.rowCount());
-		voltdb::TableIterator tit = (response.results())[jj].iterator();
-
-		while  ( true  == tit.hasNext())
-		{
-			std::cout << "row index : " << std::endl;
-			voltdb::Row row = tit.next();
-
-			//for ( ii = 0; ii << row.columnCount(); ii++)
-			{
-				std::vector<voltdb::Column> cols = row.columns();
-				const int32_t size = static_cast<int32_t>(cols.size());
-				for ( ii = 0; ii < size; ii++ )
-				{
-					switch( cols.at(ii).m_type)
-					{
-					case voltdb::WIRE_TYPE_TINYINT:
-						std::cout << static_cast<int32_t>(row.getInt8(ii)); break;
-					case voltdb::WIRE_TYPE_SMALLINT:
-						std::cout << row.getInt16(ii); break;
-					case voltdb::WIRE_TYPE_INTEGER:
-						std::cout << row.getInt32(ii); break;
-					case voltdb::WIRE_TYPE_BIGINT:
-						std::cout << row.getInt64(ii); break;
-					case voltdb::WIRE_TYPE_FLOAT:
-						std::cout << row.getDouble(ii); break;
-					case voltdb::WIRE_TYPE_STRING:
-						std::cout << "\"" << row.getString(ii) << "\""; break;
-					case voltdb::WIRE_TYPE_TIMESTAMP:
-						std::cout << row.getTimestamp(ii); break;
-					case voltdb::WIRE_TYPE_DECIMAL:
-						std::cout << row.getDecimal(ii).toString(); break;
-					case voltdb::WIRE_TYPE_VARBINARY:
-						std::cout << "VARBINARY VALUE"; break;
-					case voltdb::WIRE_TYPE_GEOGRAPHY_POINT:
-						std::cout << row.getGeographyPoint(ii).toString();
-						break;
-					case voltdb::WIRE_TYPE_GEOGRAPHY:
-						std::cout << row.getGeography(ii).toString();
-						break;
-					default:
-						//assert(false);
-						return -1;
-					}
-				}
-			}
-
-		}
-
+	try{
+		*resp = (char*)calloc (1 , strlen((char*)response.toJSON().c_str()));
+		strncpy(*resp ,  (char*)response.toJSON().c_str(), strlen((char*)response.toString().c_str()));
 	}
+	catch (...){
+		return -1;
+	}
+
 	return 0;
-
 }
-
-
 
 void  vdb_destroy_client ( void * c )
 {
@@ -194,7 +138,7 @@ void  vdb_destroy_client_config( void * cc )
 }
 
 
-static void fire ( void * client,  char * query, voltdb::InvocationResponse* resp)
+void fire ( void * client,  char * query, voltdb::InvocationResponse* resp)
 {
 	voltdb::Client* pc = reinterpret_cast<voltdb::Client*>(client);
 
@@ -208,8 +152,3 @@ static void fire ( void * client,  char * query, voltdb::InvocationResponse* res
 	*resp = pc->invoke(procedure);
 
 }
-
-
-
-
-
