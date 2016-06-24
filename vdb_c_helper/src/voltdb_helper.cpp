@@ -116,9 +116,10 @@ int vdb_fire_read_query( void * client,  char * query, char** resp)
 		return -1;
 	}
 
+
 	try{
-		*resp = (char*)calloc (1 , strlen((char*)response.toJSON().c_str()));
-		strncpy(*resp ,  (char*)response.toJSON().c_str(), strlen((char*)response.toString().c_str()));
+		*resp = (char*)calloc (1 , strlen(response.toJSON().c_str()) + 1);
+		strncpy(*resp,  response.toJSON().c_str(), strlen(response.toJSON().c_str()));
 	}
 	catch (...){
 		return -1;
