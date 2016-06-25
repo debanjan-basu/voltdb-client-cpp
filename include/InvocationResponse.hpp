@@ -195,16 +195,16 @@ public:
      */
     std::string toJSON() const {
     	bson_t obson;
-        //std::ostringstream ostream;
-        //ostream << "Status: " << static_cast<int32_t>(statusCode()) << ", " << statusString() <<  std::endl;
-        //ostream << "App Status: " << static_cast<int32_t>(appStatusCode()) << ", " << appStatusString() << std::endl;
-        //ostream << "Client Data: " << clientData() << std::endl;
-        //ostream << "Cluster Round Trip Time: " << clusterRoundTripTime() << std::endl;
+    	bson_init(&obson);
         for (size_t ii = 0; ii < m_results.size(); ii++) {
-            //ostream << "Result Table " << ii << std::endl;
             m_results[ii].toString(obson);
         }
-        return bson_as_json(&obson, NULL);
+
+        char * basj = bson_as_json(&obson, NULL);
+        std::string s = basj;
+        free(basj);
+        bson_destroy(&obson);
+        return s;
     }
 
 

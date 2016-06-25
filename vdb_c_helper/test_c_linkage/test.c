@@ -45,6 +45,9 @@ int main()
 	qbuf = NULL;
 
 	rc = vdb_fire_read_query( c, (char*)"SELECT * from Customer;", (char**)&qbuf );
+	printf("The json dump of table : %s", qbuf);
+	free(qbuf);
+	qbuf = NULL;
 	//EXPECT_EQ(0, rc);
 
 

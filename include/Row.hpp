@@ -500,6 +500,8 @@ public:
     void toString(bson_t & pobson, uint64_t ii ) {
 
     	bson_init(&pobson);
+
+
         const int32_t size = static_cast<int32_t>(m_columns->size());
         for (int32_t ii = 0; ii < size; ii++) {
             switch(m_columns->at(ii).m_type) {
@@ -546,7 +548,6 @@ public:
                 assert(false);
             }
         }
-
     }
 
 
