@@ -117,7 +117,6 @@ namespace voltdb {
 
         ostream << m_buffer.capacity();
         BSON_APPEND_UTF8 (&child, "Table size", (const char*)ostream.str().c_str());
-        std::cout <<"Table Size "<< ostream.str().c_str() << std::endl;
         ostream.str("");
 
 
@@ -137,8 +136,6 @@ namespace voltdb {
             row.toString( gchild, index );
             ostream << index;
 
-            //std::cout <<"Index to be added to array "<< ostream.str().c_str() << std::endl;
-
             BSON_APPEND_DOCUMENT(&rows, ostream.str().c_str(), &gchild);
             bson_destroy(&gchild);
             ostream.str("");
@@ -147,8 +144,6 @@ namespace voltdb {
         BSON_APPEND_ARRAY(&child, "rows", &rows);
         bson_destroy(&rows);
         bson_append_document_end (&obson, &child);
-
-        //std::cout<< bson_as_json(&obson, NULL)<< std::endl;
     }
 
 

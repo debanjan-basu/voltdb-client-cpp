@@ -197,10 +197,9 @@ public:
     	bson_t obson;
     	bson_init(&obson);
         for (size_t ii = 0; ii < m_results.size(); ii++) {
-            //ostream << "Result Table " << ii << std::endl;
             m_results[ii].toString(obson);
         }
-        //printf ("The output :%s\n", bson_as_json(&obson, NULL));
+
         char * basj = bson_as_json(&obson, NULL);
         std::string s = basj;
         free(basj);
