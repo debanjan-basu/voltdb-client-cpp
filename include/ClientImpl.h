@@ -172,9 +172,7 @@ private:
 
     Distributer  m_distributer;
     struct event_base *m_base;
-    //for holding the event till deletion
     struct event * m_ev;
-    //for holding event_config till deletion 
     struct event_config * m_cfg;
     int64_t m_nextRequestId;
     size_t m_nextConnectionIndex;
