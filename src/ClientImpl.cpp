@@ -290,12 +290,7 @@ ClientImpl::ClientImpl(ClientConfig config) throw(voltdb::Exception, voltdb::Lib
     }
 #endif
     m_cfg = event_config_new();
-<<<<<<< HEAD
-    if (!m_cfg)
-    {
-=======
     if (m_cfg == NULL) {
->>>>>>> upstream/master
         throw voltdb::LibEventException();
     }
     event_config_set_flag(m_cfg, EVENT_BASE_FLAG_NO_CACHE_TIME);//, EVENT_BASE_FLAG_NOLOCK);
