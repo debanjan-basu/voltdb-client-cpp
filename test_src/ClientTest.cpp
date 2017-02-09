@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -88,14 +88,17 @@ CPPUNIT_TEST( testCallbackThrows );
 CPPUNIT_TEST( testBackpressure );
 CPPUNIT_TEST( testDrain );
 CPPUNIT_TEST( testLostConnectionDuringDrain );
+CPPUNIT_TEST( testSynchronousInvocations );
 CPPUNIT_TEST_EXCEPTION( testLostConnection, voltdb::NoConnectionsException );
 CPPUNIT_TEST_SUITE_END();
 
 public:
     void setUp() {
         m_dlistener = new boost::shared_ptr<DelegatingListener>(new DelegatingListener());
-        m_voltdb.reset(new MockVoltDB(Client::create(ClientConfig("hello", "world", *m_dlistener))));
+        ClientConfig config = ClientConfig("hello", "world", *m_dlistener);
+        m_voltdb.reset(new MockVoltDB(Client::create(config)));
         m_client = m_voltdb->client();
+        m_client->setClientAffinity(false);
     }
 
     void tearDown() {
@@ -507,6 +510,7 @@ public:
         }
         (m_client)->drain();
         CPPUNIT_ASSERT(cb->m_count == 0);
+        CPPUNIT_ASSERT(! m_client->isDraining());
     }
 
     class CountingSuccessAndConnectionLost : public voltdb::ProcedureCallback {
@@ -541,6 +545,33 @@ public:
         (m_client)->drain();
         CPPUNIT_ASSERT(cb->m_success == 2);
         CPPUNIT_ASSERT(cb->m_connectionLost == 3);
+    }
+
+    void testSynchronousInvocations() {
+        // Regression test for ENG-10480
+
+        m_voltdb->filenameForNextResponse("invocation_response_success.msg");
+        m_client->createConnection("localhost");
+
+        std::vector<Parameter> signature;
+        Procedure proc("Insert", signature);
+
+        CountingSuccessAndConnectionLost *cb = new CountingSuccessAndConnectionLost();
+        boost::shared_ptr<ProcedureCallback> callback(cb);
+
+        // Queue up two async SP invocations
+        for (int ii = 0; ii < 2; ii++) {
+            m_client->invoke(proc, callback);
+        }
+
+        // Now do a synchronized invocation
+        InvocationResponse response = m_client->invoke(proc);
+        CPPUNIT_ASSERT(response.statusCode() == STATUS_CODE_SUCCESS);
+        CPPUNIT_ASSERT(! m_client->isDraining());
+
+        // Queued invocations will have been processed before the synchronous invocation.
+        CPPUNIT_ASSERT(cb->m_success == 2);
+        CPPUNIT_ASSERT(cb->m_connectionLost == 0);
     }
 
 private:

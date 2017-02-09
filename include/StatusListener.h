@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -62,12 +62,14 @@ public:
      * @return true if the event loop should terminate and false otherwise
      */
     virtual bool connectionActive(std::string hostname, int32_t connectionsActive) = 0;
-   
+
     /*
      * Notify the client application that backpressure occured
      * @param hasBackpressure True if backpressure is beginning and false if it is ending
-     * @return true if the client library should queue the invocation and return from invoke()
-     * or false if the library should wait until there is a connection without backpressure and then queue it.
+     * @return true, in backpressure environment, if the client library to queue the invocation and
+     *              return from invoke()
+     *         false, in backpressure environment, if the library should wait until there is a
+     *               connection without backpressure and then queue it.
      */
     virtual bool backpressure(bool hasBackpressure) = 0;
 

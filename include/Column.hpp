@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -29,7 +29,7 @@
 namespace voltdb {
 class Column {
 public:
-    Column() {}
+    Column() : m_name(""), m_type(WIRE_TYPE_INVALID) {}
     Column(std::string name, WireType type) : m_name(name), m_type(type) {}
     Column(WireType type) : m_name(""), m_type(type) {}
     std::string m_name;

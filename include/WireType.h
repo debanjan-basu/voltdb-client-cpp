@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -43,6 +43,7 @@ enum WireType {
     WIRE_TYPE_FLOAT = 8,
     WIRE_TYPE_STRING = 9,
     WIRE_TYPE_TIMESTAMP = 11,
+    WIRE_TYPE_VOLTTABLE = 21,
     WIRE_TYPE_DECIMAL = 22,
     WIRE_TYPE_VARBINARY = 25,
     WIRE_TYPE_GEOGRAPHY_POINT = 26,

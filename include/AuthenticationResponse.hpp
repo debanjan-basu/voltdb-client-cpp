@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -48,11 +48,11 @@ public:
         return m_resultCode == 0;
     }
 
-    int32_t hostId() { return m_hostId; }
-    int32_t connectionId() { return m_connectionId; }
-    int64_t clusterStartTime() { return m_clusterStartTime; }
-    int32_t leaderAddress() { return m_leaderAddress; }
-    std::string buildString() { return m_buildString; }
+    int32_t getHostId() const { return m_hostId; }
+    int32_t getConnectionId() const { return m_connectionId; }
+    int64_t getClusterStartTime() const { return m_clusterStartTime; }
+    int32_t getLeaderAddress() const { return m_leaderAddress; }
+    std::string getBuildString() const { return m_buildString; }
 
 private:
     int8_t m_resultCode;

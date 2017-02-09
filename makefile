@@ -12,7 +12,7 @@ BOOST_INCLUDES=/usr/local/include
 BOOST_LIBS=/usr/local/lib
 CFLAGS=-I$(BOOST_INCLUDES) -Iinclude -Iinclude/libbson-1.0 -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -g3 ${OPTIMIZATION} 
 LIB_NAME=libvoltdbcpp
-KIT_NAME=voltdb-client-cpp-x86_64-5.2
+KIT_NAME=voltdb-client-cpp-x86_64-6.8
 
 PLATFORM = $(shell uname)
 ifeq ($(PLATFORM),Darwin)
@@ -47,6 +47,7 @@ TEST_OBJS := test_obj/ByteBufferTest.o \
 			 test_obj/SerializationTest.o \
 			 test_obj/GeographyPointTest.o \
 			 test_obj/GeographyTest.o \
+			 test_obj/TableTest.o \
 			 test_obj/Tests.o
 
 CPTEST_OBJS := test_obj/ConnectionPoolTest.o \

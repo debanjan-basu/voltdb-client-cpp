@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -36,23 +36,32 @@ public:
     ClientConfig(
             std::string username = std::string(""),
             std::string password = std::string(""),
-            ClientAuthHashScheme scheme = HASH_SHA1, bool enableAbandon = false);
+            ClientAuthHashScheme scheme = HASH_SHA1, bool enableAbandon = false,
+            bool enableQueryTimeout = false, int timeoutInSec =  DEFAULT_QUERY_TIMEOUT_SEC);
     ClientConfig(
             std::string username,
             std::string password,
             boost::shared_ptr<StatusListener> listener,
-            ClientAuthHashScheme scheme = HASH_SHA1, bool enableAbandon = false);
+            ClientAuthHashScheme scheme = HASH_SHA1, bool enableAbandon = false,
+            bool enableQueryTimeout = false, int timeoutInSec = DEFAULT_QUERY_TIMEOUT_SEC);
     ClientConfig(
             std::string username,
             std::string password,
             StatusListener *listener,
-            ClientAuthHashScheme scheme = HASH_SHA1, bool enableAbandon = false);
+            ClientAuthHashScheme scheme = HASH_SHA1, bool enableAbandon = false,
+            bool enableQueryTimeout = false, int timeoutInSec = DEFAULT_QUERY_TIMEOUT_SEC);
     std::string m_username;
     std::string m_password;
     boost::shared_ptr<StatusListener> m_listener;
     int32_t m_maxOutstandingRequests;
     ClientAuthHashScheme m_hashScheme;
     bool m_enableAbandon;
+    bool m_enableQueryTimeout;
+    timeval m_queryTimeout;
+    timeval m_scanIntervalForTimedoutQuery;
+private:
+    static const int8_t DEFAULT_QUERY_TIMEOUT_SEC = 10;
+    static const int8_t DEFAULT_SCAN_INTERVAL_FOR_EXPIRED_REQUESTS_SEC = 2;
 };
 }
 

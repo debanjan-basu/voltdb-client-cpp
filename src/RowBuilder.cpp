@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,7 +23,12 @@
 
 #include "RowBuilder.h"
 #include "Table.h"
+
 namespace voltdb {
-    RowBuilder::RowBuilder(Table *table) :
-    m_columns(*table->m_columns.get()), m_buffer(8192), m_currentColumn(0) {}
+    RowBuilder::RowBuilder(const std::vector<Column> &schema) throw (RowCreationException) :
+    m_columns(schema), m_buffer(8192), m_currentColumnIndex(0) {
+        if (m_columns.empty()) {
+            throw RowCreationException("The schema for row must contain at least one column");
+        }
+    }
 }

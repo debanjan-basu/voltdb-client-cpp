@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -125,6 +125,12 @@ public:
     bool drain() throw (voltdb::NoConnectionsException, voltdb::LibEventException, voltdb::Exception);
 
     /*
+     * Returns true if this client is draining; i.e., still processing
+     * requests after receiving a call to drain().
+     */
+    bool isDraining() const;
+
+    /*
      * If one of the run family of methods is running on another thread, this
      * method will instruct it to exit as soon as it finishes it's current
      * immediate task. If the thread in the run method is blocked/idle, then
@@ -157,16 +163,26 @@ public:
      * API to be called to enable client affinity (transaction homing)
      */
     void setClientAffinity(bool enable);
-    bool getClientAffinity();
+    bool getClientAffinity() const;
 
     /*
      * API to set Logger callback. Must be called while Client is not running
      */
     void setLoggerCallback(ClientLogger *pLogger);
 
+    /*
+     * Returns the number of outstanding/pending requests
+     */
     int32_t outstandingRequests() const;
+    /*
+     * Returns number of procedure call requests that were timedout
+     * Applicable only when query timeout feature is enabled
+     */
+    int64_t getExpiredRequestsCount() const;
+
     ~Client();
 private:
+
     /*
      * Disable various constructors and assignment
      */

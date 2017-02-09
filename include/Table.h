@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -42,13 +42,14 @@ class RowBuilder;
  * Reprentation of result tables returns by VoltDB.
  */
 class Table {
-    friend class RowBuilder;
+    friend class TableTest;
 public:
     /*
      * Construct a table from a shared buffer. The table retains a reference
      * to the shared buffer indefinitely so watch out for unwanted memory retension.
      */
     Table(SharedByteBuffer buffer);
+    Table(const std::vector<Column> &columns) throw (TableException);
     Table() {}
 
     ~Table() {
@@ -71,6 +72,13 @@ public:
     int32_t rowCount() const;
 
     /*
+     * Adds the row specified in RowBuilder to table.
+     * Precondition: Row and Table schema should be same
+     * and all the row columns should be init'ed
+     */
+    void addRow(RowBuilder& row) throw (TableException, UninitializedColumnException, InCompatibleSchemaException);
+
+    /*
      * Retrieve a copy of the column metadata.
      */
     std::vector<voltdb::Column> columns() const;
@@ -86,6 +94,19 @@ public:
     std::string toString() const;
 
     /*
+     * Serialize Volt table to specified byte buffer. The specified buffer should
+     * have ample space available to serialize table data. The needed space can
+     * be queried using getSerializedSize()
+     */
+    int32_t serializeTo(ByteBuffer& buffer) throw (TableException);
+
+    /**
+     * Returns the size in bytes needed to serialize the current table data
+     * including 4 byte size meta-data
+     */
+    int32_t getSerializedSize() const;
+
+    /*
      * Returns a string representation of this table and all of its rows with
      * the specified level of indentation before each line.
      */
@@ -98,9 +119,12 @@ public:
 
     Table(std::istream &istream);
 
+    const static int32_t MAX_TUPLE_LENGTH;
+    const static int8_t DEFAULT_STATUS_CODE;
 private:
+    void validateRowScehma(const std::vector<Column>& schema) const throw (InCompatibleSchemaException);
     boost::shared_ptr<std::vector<voltdb::Column> > m_columns;
-    int32_t m_rowStart;
+    int32_t m_rowCountPosition;
     int32_t m_rowCount;
     mutable voltdb::SharedByteBuffer m_buffer;
 };

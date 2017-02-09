@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -30,7 +30,6 @@
 #include <list>
 #include <string>
 #include "ProcedureCallback.hpp"
-//#include "StatusListener.h"
 #include "Client.h"
 #include "Procedure.hpp"
 #include <boost/atomic.hpp>
@@ -38,6 +37,7 @@
 #include <boost/thread/mutex.hpp>
 #include "ClientConfig.h"
 #include "Distributer.h"
+
 namespace voltdb {
 
 class CxnContext;
@@ -51,18 +51,6 @@ class ClientImpl {
     friend class Client;
 
 public:
-
-    /*
-     * Map from client data to the appropriate callback for a specific connection
-     */
-    typedef std::map< int64_t, boost::shared_ptr<ProcedureCallback> > CallbackMap;
-
-    /*
-     * Map from buffer event (connection) to the connection's callback map
-     */
-    typedef std::map< struct bufferevent*, boost::shared_ptr<CallbackMap> > BEVToCallbackMap;
-
-
     /*
      * Create a connection to the VoltDB process running at the specified host authenticating
      * using the username and password provided when this client was constructed
@@ -71,7 +59,7 @@ public:
      * @throws voltdb::ConnectException An error occurs connecting or authenticating
      * @throws voltdb::LibEventException libevent returns an error code
      */
-    void createConnection(const std::string &hostname, const unsigned short port, const bool keepConnecting) throw (voltdb::Exception, voltdb::ConnectException, voltdb::LibEventException);
+    void createConnection(const std::string &hostname, const unsigned short port, const bool keepConnecting) throw (voltdb::Exception, voltdb::ConnectException, voltdb::LibEventException, voltdb::PipeCreationException, voltdb::TimerThreadException);
 
     /*
      * Synchronously invoke a stored procedure and return a the response.
@@ -91,6 +79,7 @@ public:
     * @return true if all requests were drained and false otherwise
     */
     bool drain() throw (voltdb::Exception, voltdb::NoConnectionsException, voltdb::LibEventException);
+    bool isDraining() const { return m_isDraining; }
     ~ClientImpl();
 
     void regularReadCallback(struct bufferevent *bev);
@@ -98,6 +87,10 @@ public:
     void regularWriteCallback(struct bufferevent *bev);
     void eventBaseLoopBreak();
     void reconnectEventCallback();
+
+    void runTimeoutMonitor() throw (voltdb::LibEventException);
+    void purgeExpiredRequests();
+    void triggerScanForTimeoutRequestsEvent();
 
     /*
      * If one of the run family of methods is running on another thread, this
@@ -123,17 +116,20 @@ public:
      * API to be called to enable client affinity (transaction homing)
      */
     void setClientAffinity(bool enable);
-    bool getClientAffinity(){return m_useClientAffinity;}
+    bool getClientAffinity() const {return m_useClientAffinity;}
 
     int32_t outstandingRequests() const {return m_outstandingRequests;}
 
     void setLoggerCallback(ClientLogger *pLogger) { m_pLogger = pLogger;}
 
-private:
-    ClientImpl(ClientConfig config) throw(voltdb::Exception, voltdb::LibEventException);
+    int64_t getExpiredRequestsCount() const { return m_timedoutRequests; }
+    int64_t getResponseWithHandlesNotInCallback() const { return m_responseHandleNotFound; }
 
-    void initiateAuthentication(PendingConnection* pc, struct bufferevent *bev) throw (voltdb::LibEventException);
-    void finalizeAuthentication(PendingConnection* pc, struct bufferevent *bev) throw (voltdb::Exception, voltdb::ConnectException);
+private:
+    ClientImpl(ClientConfig config) throw (voltdb::Exception, voltdb::LibEventException);
+
+    void initiateAuthentication(struct bufferevent *bev) throw (voltdb::LibEventException);
+    void finalizeAuthentication(PendingConnection* pc) throw (voltdb::Exception, voltdb::ConnectException);
 
     /*
      * Updates procedures and topology information for transaction routing algorithm
@@ -170,6 +166,36 @@ private:
      */
     void logMessage(ClientLogger::CLIENT_LOG_LEVEL severity, const std::string& msg);
 
+    void setUpTimeoutCheckerMonitor() throw (voltdb::LibEventException);
+    void startMonitorThread() throw (voltdb::TimerThreadException);
+    bool isReadOnly(const Procedure &proc) ;
+
+private:
+    class CallBackBookeeping {
+    public:
+        CallBackBookeeping(const boost::shared_ptr<ProcedureCallback> &callback,
+                timeval timeout, bool readOnly = false) : m_procCallBack(callback),
+                                                          m_expirationTime(timeout),
+                                                          m_readOnly(readOnly) {}
+        inline boost::shared_ptr<ProcedureCallback>  getCallback() const { return m_procCallBack; }
+        // fetch the query/proc timeout/expiration value
+        inline timeval getExpirationTime() const { return m_expirationTime; }
+        // returns true if the procedure is readOnly.
+        inline bool isReadOnly() const { return m_readOnly; }
+        // helper function to set if the proc is readonly or not
+        inline void setReadOnly(bool value) { m_readOnly = value; }
+    private:
+        const boost::shared_ptr<ProcedureCallback> m_procCallBack;
+        const timeval m_expirationTime;
+        bool m_readOnly;
+    };
+
+    // Map from client data to the appropriate callback for a specific connection
+    typedef std::map< int64_t, boost::shared_ptr<CallBackBookeeping> > CallbackMap;
+    // Map from buffer event (connection) to the connection's callback map
+    typedef std::map< struct bufferevent*, boost::shared_ptr<CallbackMap> > BEVToCallbackMap;
+
+    // data member variables
     Distributer  m_distributer;
     struct event_base *m_base;
     struct event * m_ev;
@@ -183,6 +209,7 @@ private:
     BEVToCallbackMap m_callbacks;
     boost::shared_ptr<voltdb::StatusListener> m_listener;
     bool m_invocationBlockedOnBackpressure;
+    bool m_backPressuredForOutstandingRequests;
     boost::atomic<bool> m_loopBreakRequested;
     bool m_isDraining;
     bool m_instanceIdIsSet;
@@ -209,10 +236,37 @@ private:
     int m_wakeupPipe[2];
     boost::mutex m_wakeupPipeLock;
 
+    // query timeout management
+
+    // Trigger for query timeout operates on separate base running on separate thread.
+    // Monitor gets setup during connection creation if query timeout feature is enabled.
+    // Enabling of query timeout is deduced from client config and can't be toggled on fly
+    const bool m_enableQueryTimeout;
+    pthread_t m_queryTimeoutMonitorThread;
+    // base for monitor thread
+    struct event_base *m_timerMonitorBase;
+    // monitor event ptr, registered with monitor base. Monitor event triggers event
+    // to main base to scan outstanding requests if they have expired
+    struct event *m_timerMonitorEventPtr;
+    // event ptr, registered with main base, listens for requests to perform scans
+    // on pending requests. If any wait time of pending requests has exceed expiration
+    // time, requests is timedout by sending timeout response to client and pending request
+    // dropped from the pending callback list
+    struct event *m_timeoutServiceEventPtr;
+    // pipe to trigger events from monitor thread to main thread
+    int m_timerCheckPipe[2];
+    bool m_timerMonitorEventInitialized;
+    struct timeval m_queryExpirationTime;
+    struct timeval m_scanIntervalForTimedoutQuery;
+
+    // timer stats for debugging
+    int64_t m_timedoutRequests;
+    int64_t m_responseHandleNotFound;
+
     ClientLogger* m_pLogger;
     ClientAuthHashScheme m_hashScheme;
     static const int64_t VOLT_NOTIFICATION_MAGIC_NUMBER;
-
+    static const std::string SERVICE;
 };
 }
 #endif /* VOLTDB_CLIENTIMPL_H_ */

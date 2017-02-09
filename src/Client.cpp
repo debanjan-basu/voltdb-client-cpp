@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,7 +26,7 @@
 
 namespace voltdb {
 
-Client Client::create(ClientConfig config) throw(voltdb::Exception, voltdb::LibEventException) {
+Client Client::create(ClientConfig config) throw (voltdb::Exception, voltdb::LibEventException) {
     Client client(new ClientImpl(config));
     return client;
 }
@@ -42,61 +42,65 @@ Client::Client(ClientImpl *impl) : m_impl(impl) {}
 Client::~Client() {
 }
 
-void
-Client::createConnection(
-        const std::string &hostname,
-        const unsigned short port,
-        const bool keepConnecting)
-throw (voltdb::Exception, voltdb::ConnectException, voltdb::LibEventException) {
+void Client::createConnection(const std::string &hostname,
+                              const unsigned short port,
+                              const bool keepConnecting) throw (voltdb::Exception,
+                                                                voltdb::ConnectException,
+                                                                voltdb::LibEventException) {
     m_impl->createConnection(hostname, port, keepConnecting);
 }
 
-void
-Client::close() {
+void Client::close() {
     m_impl->close();
 }
 
 /*
  * Synchronously invoke a stored procedure and return a the response.
  */
-InvocationResponse
-Client::invoke(Procedure &proc)
-throw (voltdb::Exception, voltdb::NoConnectionsException, voltdb::UninitializedParamsException, voltdb::LibEventException) {
+InvocationResponse Client::invoke(Procedure &proc) throw (voltdb::Exception,
+                                                          voltdb::NoConnectionsException,
+                                                          voltdb::UninitializedParamsException,
+                                                          voltdb::LibEventException) {
     return m_impl->invoke(proc);
 }
 
-void
-Client::invoke(
-        Procedure &proc,
-        boost::shared_ptr<ProcedureCallback> callback)
-throw (voltdb::Exception, voltdb::NoConnectionsException, voltdb::UninitializedParamsException, voltdb::LibEventException) {
+void Client::invoke(Procedure &proc,
+                    boost::shared_ptr<ProcedureCallback> callback) throw (voltdb::Exception,
+                                                                          voltdb::NoConnectionsException,
+                                                                          voltdb::UninitializedParamsException,
+                                                                          voltdb::LibEventException) {
     m_impl->invoke(proc, callback);
 }
 
-void
-Client::invoke(
-        Procedure &proc,
-        ProcedureCallback *callback)
-throw (voltdb::Exception, voltdb::NoConnectionsException, voltdb::UninitializedParamsException, voltdb::LibEventException) {
+void Client::invoke(Procedure &proc,
+                    ProcedureCallback *callback) throw (voltdb::Exception,
+                                                        voltdb::NoConnectionsException,
+                                                        voltdb::UninitializedParamsException,
+                                                        voltdb::LibEventException) {
     m_impl->invoke(proc, callback);
 }
 
-void
-Client::runOnce()
-throw (voltdb::Exception, voltdb::NoConnectionsException, voltdb::LibEventException) {
+void Client::runOnce() throw (voltdb::Exception,
+                              voltdb::NoConnectionsException,
+                              voltdb::LibEventException) {
     m_impl->runOnce();
 }
 
-void
-Client::run()
-throw (voltdb::Exception, voltdb::NoConnectionsException, voltdb::LibEventException) {
+void Client::run() throw (voltdb::Exception,
+                          voltdb::NoConnectionsException,
+                          voltdb::LibEventException) {
     m_impl->run();
 }
 
-bool
-Client::drain()
-throw (voltdb::Exception, voltdb::NoConnectionsException, voltdb::LibEventException) {
+bool Client::drain() throw (voltdb::Exception,
+                            voltdb::NoConnectionsException,
+                            voltdb::LibEventException) {
     return m_impl->drain();
+}
+
+bool
+Client::isDraining() const {
+    return m_impl->isDraining();
 }
 
 void Client::interrupt() {
@@ -107,8 +111,7 @@ void Client::wakeup() {
     return m_impl->wakeup();
 }
 
-bool
-Client::operator==(const Client &other) {
+bool Client::operator==(const Client &other) {
     return m_impl == other.m_impl;
 }
 
@@ -119,12 +122,16 @@ void Client::setClientAffinity(bool enable) {
     m_impl->setClientAffinity(enable);
 }
 
-bool Client::getClientAffinity() {
+bool Client::getClientAffinity() const {
     return m_impl->getClientAffinity();
 }
 
 int32_t Client::outstandingRequests() const {
     return m_impl->outstandingRequests();
+}
+
+int64_t Client::getExpiredRequestsCount() const {
+    return m_impl->getExpiredRequestsCount();
 }
 
 void Client::setLoggerCallback(ClientLogger *pLogger) {

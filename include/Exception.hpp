@@ -1,5 +1,5 @@
 /* This file is part of VoltDB.
- * Copyright (C) 2008-2016 VoltDB Inc.
+ * Copyright (C) 2008-2017 VoltDB Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,6 +25,7 @@
 #define VOLTDB_EXCEPTION_HPP_
 #include <cstdio>
 #include <exception>
+#include "WireType.h"
 
 namespace voltdb {
 
@@ -60,10 +61,10 @@ public:
         m_what = "Attempted to retrieve a column with an invalid index or name, or an invalid type for the specified column";
     }
 
-    explicit InvalidColumnException(const size_t index) :
+    explicit InvalidColumnException(const size_t index, const size_t numColumns) :
         Exception() {
         char msg[256];
-        snprintf(msg, sizeof msg, "Attempted to retrieve a column with an invalid index: %ld", index);
+        snprintf(msg, sizeof msg, "Attempted to retrieve a column with an invalid index: %ld; valid high index: %ld", index, numColumns-1);
         m_what = msg;
     }
 
@@ -86,6 +87,38 @@ public:
     }
 };
 
+class RowCreationException : public voltdb::Exception {
+private:
+    std::string m_what;
+    explicit RowCreationException():Exception() {}
+public:
+
+    RowCreationException(const std::string &msg) {
+        m_what = "Failed to create row. " + msg;
+    }
+
+    const char* what() const throw() {
+        return m_what.c_str();
+    }
+
+    ~RowCreationException() throw() {}
+};
+
+class TableException : public Exception {
+private:
+    std::string m_what;
+    explicit TableException() {}
+public:
+
+
+    explicit TableException(const std::string& msg) : m_what(msg){ }
+
+    const char* what() const throw() {
+        return m_what.c_str();
+    }
+
+    ~TableException() throw() {}
+};
 /*
  * Thrown by ByteBuffer when an attempt is made to get or put data beyond the limit or capacity of the ByteBuffer
  * Users should never see this error since they don't access ByteBuffers directly. They access them
@@ -222,11 +255,24 @@ public:
  * e.g. Authentication fails while attempting to connect to a node
  */
 class ConnectException : public voltdb::Exception {
+    std::string m_what;
 public:
-    ConnectException() : Exception() {}
-    virtual const char* what() const throw() {
-        return "An error occured while attempting to create and authenticate a connection to VoltDB";
+    explicit ConnectException() : Exception() {
+        m_what = "An error occurred while attempting to create and authenticate a connection to VoltDB";
     }
+    explicit ConnectException(const std::string &hostname, unsigned short port) {
+        char msg[1024];
+        snprintf(msg, sizeof msg,
+                "An error occurred while attempting to create and authenticate a connection to : %s:%d",
+                hostname.c_str(), (unsigned int)port);
+        m_what = msg;
+    }
+
+    const char* what() const throw() {
+        return m_what.c_str();
+    }
+
+    virtual ~ConnectException() throw () {}
 };
 
 /*
@@ -258,10 +304,17 @@ public:
  * to tell what happened.
  */
 class LibEventException : public voltdb::Exception {
+    std::string m_what;
 public:
-    LibEventException() : Exception() {}
-    virtual const char* what() const throw() {
-        return "Lib event generated an unexpected error";
+    explicit LibEventException() : Exception() {
+        m_what = "Lib event generated an unexpected error";
+    }
+    explicit LibEventException(const std::string& msg) : Exception() {
+        m_what = "Lib event generated an unexpected error: " + msg;
+    }
+    virtual ~LibEventException() throw() {}
+    const char* what() const throw() {
+        return m_what.c_str();
     }
 };
 
@@ -301,6 +354,62 @@ public:
     virtual const char* what() const throw() {
         return m_what.c_str();
     }
+};
+
+class PipeCreationException : public voltdb::Exception {
+    std::string m_what;
+public:
+    explicit PipeCreationException() : Exception() {
+        m_what = "Failed to create pipe";
+    }
+    virtual ~PipeCreationException() throw() {}
+
+    virtual  const char* what() const throw() {
+        return m_what.c_str();
+    }
+};
+
+
+class TimerThreadException : public voltdb::Exception {
+private:
+    std::string m_msg;
+public:
+    explicit TimerThreadException() : Exception() {
+        m_msg = "Timer thread exception";
+    }
+    explicit TimerThreadException(std::string msg) {
+        m_msg = "Timer thread exception: " + msg;
+    }
+
+    virtual ~TimerThreadException() throw () {}
+
+    const char* what() const throw () { return m_msg.c_str();}
+};
+
+class UninitializedColumnException : public Exception {
+private:
+    std::string m_what;
+public:
+    explicit UninitializedColumnException() : Exception() {
+        m_what = "Uninitialized column exception";
+    }
+    explicit UninitializedColumnException(size_t neededColumns, size_t providedColumns) : Exception() {
+        char msg[1024];
+        snprintf(msg, sizeof (msg), "Row must contain data for all columns. %ld columns required, only %ld columns provided", neededColumns, providedColumns);
+        m_what = std::string(msg);
+    }
+
+    const char* what() const throw () { return m_what.c_str(); }
+
+    ~UninitializedColumnException() throw() {}
+};
+
+class InCompatibleSchemaException : public Exception {
+public:
+    explicit InCompatibleSchemaException() : Exception() {}
+    const char* what() const throw() { return "Incompatible schema"; }
+    ~InCompatibleSchemaException() throw() {}
+
 };
 
 }
