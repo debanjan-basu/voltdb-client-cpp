@@ -8,8 +8,10 @@ STATIC_LIB_TARGET=$(SHARED_LIB_TARGET:.so=.a)
 
 # Path to source files
 vpath %.cpp src
+vpath %.c src
 
 SOURCESPP = voltdb_helper.cpp
+SOURCES = base64.c
 
 # Tell the Makefile where install the compiled targets ...
 INSTALL_FILES = $(TARGET_BIN_DIR)/$(TARGET_NAME)
@@ -17,14 +19,12 @@ DEPEND_SUBDIRS = $(TOP_DIR)/../
 
 INCLUDES = -I./ -I$(TOP_DIR)/../ \
 	   -I$(TOP_DIR)/../include/ \
-	   -I$(TOP_DIR)/../include/libbson-1.0/
 
-LIBS = -lvoltdbcpp -lbson-1.0
+LIBS = -lvoltdbcpp
 STATIC_LIBS = -levent
 
 LIBPATHS = -L$(TOP_DIR)/../third_party_libs/linux/ \
 	   -L$(TOP_DIR)/../ \
-	   -L$(TOP_DIR)/../third_party_libs/linux/libbson-1.0/ \
 
 
 CFLAGS =

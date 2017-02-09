@@ -6,9 +6,8 @@ TARGET_NAME = test
 BIN_TARGET = $(BUILD_CONFIG)/$(TARGET_NAME)
 
 # Path to source files
-vpath %.c src
-
-SOURCES = test.c 
+vpath %.c . 
+SOURCES = test.c
 
 DEPEND_SUBDIRS = $(TOP_DIR)/../ $(TOP_DIR)/
 
@@ -16,11 +15,10 @@ INCLUDES = -I./ \
 	   -I$(TOP_DIR)/header \
 	   -I$(TOP_DIR)/../include
 
-LIBS = -lvoltdbcpp  -lcvh -lbson-1.0 -lpthread
-STATIC_LIBS = -levent  -levent_pthreads
+LIBS = -lvoltdbcpp  -lcvh -lpthread
+STATIC_LIBS = -levent -levent_pthreads
 
 LIBPATHS = -L$(TOP_DIR)/../third_party_libs/linux/ \
-	   -L$(TOP_DIR)/../third_party_libs/linux/libbson-1.0/ \
 	   -L$(TOP_DIR)/$(BUILD_CONFIG)/ \
 	   -L$(TOP_DIR)/../
 
